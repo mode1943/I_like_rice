@@ -1,0 +1,11 @@
+<html>
+<head>
+hahhah
+</head>
+<body>
+{% if request.user.is_authenticated %}
+    welcome, {{request.user.username}}
+    <a href="{% url logout %}">out</a>
+{% endif %}
+</body>
+</html>

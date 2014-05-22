@@ -1,0 +1,17 @@
+Django==1.4.5
+South>=0.8.4
+celery>=3.1.8
+flower>=0.6.0
+MySQL-python>=1.2.5
+django-photologue
+django-treebeard
+django-debug-toolbar
+selenium
+PIL>=1.1.6
+#-e git+https://bitbucket.org/lylhbl/order_system/commits/b96f9b2becb4f73db881499fb60186edc3c7f252#egg=order_system
+#https://bitbucket.org/lylhbl/order_system/downloads/order_system-2.14.tar.gz 
+#http://192.168.2.251:8686/order_system-2.18.tar.gz 
+
+
+
+
