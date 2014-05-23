@@ -1,0 +1,72 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-23 16:20+0800\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+
+#: captcha/fields.py:91
+msgid "Play CAPTCHA as audio file"
+msgstr ""
+
+#: captcha/fields.py:106 captcha/fields.py:135 captcha/tests/tests.py:99
+#: captcha/tests/tests.py:239 captcha/tests/tests.py:246
+msgid "Invalid CAPTCHA"
+msgstr ""
+
+#: captcha/tests/tests.py:125
+msgid "This field is required."
+msgstr ""
+
+#: rice_rice/models.py:11
+msgid "rice with meat and vegetables"
+msgstr "盖饭"
+
+#: rice_rice/models.py:12
+msgid "pasta"
+msgstr "面食"
+
+#: rice_rice/models.py:13
+msgid "a fried dish"
+msgstr "小炒"
+
+#: rice_rice/models.py:14
+msgid "drink"
+msgstr "饮料"
+
+#: rice_rice/models.py:15
+msgid "rice flour"
+msgstr "米粉"
+
+#: rice_rice/models.py:19
+msgid "five rice"
+msgstr "5米"
+
+#: rice_rice/models.py:20
+msgid "four rice"
+msgstr "4米"
+
+#: rice_rice/models.py:21
+msgid "three rice"
+msgstr "3米"
+
+#: rice_rice/models.py:22
+msgid "two rice"
+msgstr "2米"
+
+#: rice_rice/models.py:23
+msgid "zero rice"
+msgstr "0米"
