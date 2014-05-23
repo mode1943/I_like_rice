@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-23 16:20+0800\n"
+"POT-Creation-Date: 2014-05-23 18:04+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,6 +30,14 @@ msgstr ""
 #: captcha/tests/tests.py:125
 msgid "This field is required."
 msgstr ""
+
+#: rice_member/models.py:7
+msgid "boy"
+msgstr "男"
+
+#: rice_member/models.py:8
+msgid "girl"
+msgstr "女"
 
 #: rice_rice/models.py:11
 msgid "rice with meat and vegetables"

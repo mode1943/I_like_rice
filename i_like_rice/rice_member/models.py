@@ -1,22 +1,17 @@
 from django.db import models
 from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 # Create your models here.
 SEX_CHOICES = (
-                ('M', 'boy'),
-                ('W', 'girl'),
+                ('M', _('boy')),
+                ('W', _('girl')),
               )
 
-GROUP_IDENTIFY_CHOICES = (
-                            ('M', 'member'),
-                            ('G', 'group'),
-                         )
 
 class Group(models.Model):
     """ the group class """
     name = models.CharField(max_length=30, null=True, blank=True, verbose_name='the_group_name')
-    group_identify = models.CharField(max_length=2, default='M', choices=GROUP_IDENTIFY_CHOICES, \
-                                     db_index=True, verbose_name='group_identify')
     c_time = models.DateTimeField(auto_now_add=True, blank=True, null=True)
     description = models.CharField(max_length=50, blank=True, null=True)
     headman = models.IntegerField(max_length=10, blank=True, null=True)
