@@ -1,8 +1,10 @@
 from datetime import datetime
 from time import time
 from PIL import Image
+import os
 
 from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
 from django.db import models
 
 # Create your models here.
@@ -30,6 +32,7 @@ class RiceRoom(models.Model):
     priority = models.CharField(max_length=5, default='E', choices=priority_CHOICES, verbose_name='the ranking')
     is_open = models.IntegerField(max_length=1, default=1, verbose_name='wether on the bussiness')
     c_time = models.DateTimeField(auto_now_add=True)
+
     def __unicode__(self):
         return self.name
 
@@ -50,6 +53,55 @@ class RiceRoom(models.Model):
         """delete rice room """
         cls.objects.get(pk=int(rm_id)).delete()
         return True
+
+
+
+class RiceRoomPic(models.Model):
+    """ define the RiceRoomPic to create some picture for every RiceRoom """
+    name = models.CharField(max_length=50, blank=True, null=True, verbose_name="RiceRoom's picture")
+    path = models.CharField(max_length=100, blank=True, null=True, verbose_name="the picture's savepath")
+    riceroom = models.ForeignKey(RiceRoom)
+    c_time = models.DateTimeField(auto_now_add=True)
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['c_time']
+
+    @classmethod
+    def save_pic(cls, f, riceroom_id):
+        """save the rice picture """
+        if f is not None and RiceRoom.objects.filter(pk=int(riceroom_id)).exists():
+            s_path = "%s/%s/%s/" %(datetime.now().year, datetime.now().month, datetime.now().day)
+            save_path = os.path.join(settings.PHOTO_ROOT, s_path)
+            save_name = "%s.jpg" % int(time())
+            if not os.path.exists(save_path):
+                os.makedirs(save_path)
+            url_path = os.path.join(settings.PHOTO_URL, s_path, save_name)
+            cls.objects.create(name=os.path.splitext(f.name)[0], path=url_path, riceroom_id=riceroom_id)
+            img = Image.open(f)
+            img.thumbnail((150,210), Image.ANTIALIAS)
+            img.save(os.path.join(save_path, save_name), quality=100)
+            return True
+        else:
+            raise ValueError('file not null and the riceroom has not exist')
+
+    @classmethod
+    def delete_pic(cls, pic_id):
+        """ delete the picture """
+        if pic_id:
+            try:
+                p = cls.objects.get(pk=int(pic_id))
+                local_file = os.path.realpath(settings.MEDIA_ROOT) + p.path
+                if local_file:
+                    os.remove(local_file)
+                p.delete()
+                return True
+            except RiceRoomPic.DoesNotExist:
+                raise ValueError('the picRoom does not exists')
+        else:
+            raise ValueError('the picture you want to delete cannot be null')
 
 
 class Rice(models.Model) :
@@ -111,8 +163,6 @@ class RicePic(models.Model):
     @classmethod
     def save_pic(cls, f, rice_id):
         """save the rice picture """
-        from django.conf import settings
-        import os
         if f is not None and Rice.objects.filter(pk=int(rice_id)).exists():
             s_path = "%s/%s/%s/" %(datetime.now().year, datetime.now().month, datetime.now().day)
             save_path = os.path.join(settings.PHOTO_ROOT, s_path)
@@ -134,6 +184,9 @@ class RicePic(models.Model):
         if pic_id:
             try:
                 p = cls.objects.get(pk=int(pic_id))
+                local_file = os.path.realpath(settings.MEDIA_ROOT) + p.path
+                if local_file:
+                    os.remove(local_file)
                 p.delete()
                 return True
             except RicePic.DoesNotExist:
