@@ -16,4 +16,5 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     url(r'^member/', include('rice_member.urls')),
     url(r'^captcha/', include('captcha.urls')),
+    url(r'^demo/', include('rice.urls')),
 )

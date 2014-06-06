@@ -147,6 +147,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rice_member',
     'rice_rice',
+    'rice_order',
+    'rice',
     'captcha',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',

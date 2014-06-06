@@ -1,13 +1,26 @@
 import time
+import random
 
 from django.utils.translation import ugettext_lazy as _
 from django.db import models
 
 from rice_rice.models import RiceRoom
 # Create your models here.
-def create_orderid(r_id, m_id):
+def create_orderid():
     """create 8 bit number for order """
-    pass
+    code1 = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    code2 = ['1', '2' , '3', '4', '5', '6', '7', '8', '9']
+    lenth = 0
+    orders = []
+    while lenth < 8:
+        s = random.choice(code1)
+        orders.append(s)
+        lenth += 1
+    if orders[0] == '0':
+        orders[0] = random.choice(code2)
+    if orders[7] == '0':
+        orders[7] == random.choice(code2)
+    return ''.join(orders)
 
 
 status_CHOICES = (
@@ -18,10 +31,10 @@ status_CHOICES = (
 class Order(models.Model):
     """ the rice order """
     order_id = models.CharField(max_length=10, db_index=True, blank=True, null=True, verbose_name='order id')
-    rice_id = modesl.CharField(max_length=10, blank=True, null=True, verbose_name='rice id')
+    rice_id = models.CharField(max_length=10, blank=True, null=True, verbose_name='rice id')
     member_id = models.CharField(max_length=10, blank=True, null=True, verbose_name='member id')
     c_time = models.DateTimeField(auto_now_add=True)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     order_num = models.IntegerField('nums', default=1)
     status = models.CharField(max_length=5, blank=True, null=True, default='0', choices=status_CHOICES, verbose_name='order status')
 
@@ -38,10 +51,20 @@ class Order(models.Model):
         """ create one order """
         from decimal import Decimal
         if rice_id and member_id:
-            order_id = create_orderid(rice_id, member_id)
+            while 1:
+                order_id = create_orderid()
+                try:
+                    cls.objects.get(order_id=order_id)
+                except:
+                    break
+                else:
+                    continue
+
             od = cls.objects.create(order_id=order_id, rice_id=rice_id, member_id=member_id)
             order_num = kwargs.get('order_num', 1)
+            od.order_num = order_num
             price = Decimal(kwargs.get('price', 0)) * order_num
+            od.price = price
             od.status = '1'
             od.save()
             return od
@@ -71,7 +94,7 @@ class Order(models.Model):
     def get_rice_order(cls, rice_id):
         """ you can get orders from the same rice """
         if rice_id:
-            rice_orders = cls.objects.filter(rice_id=int(rice_id))
+            orders = cls.objects.filter(rice_id=int(rice_id))
             return orders
         else:
             raise ValueError('you should give one rice_id')
@@ -88,6 +111,8 @@ class Order(models.Model):
                 rice_list = [ r.pk for r in room.rice_set.all()]
                 orders = cls.objects.filter(rice_id__in=rice_list)
                 return orders
+        else:
+            raise ValueError('you should give one room_id')
     
 
         
