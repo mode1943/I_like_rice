@@ -164,14 +164,14 @@ class RicePic(models.Model):
     def save_pic(cls, f, rice_id):
         """save the rice picture """
         if f is not None and Rice.objects.filter(pk=int(rice_id)).exists():
+            pic = cls.objects.filter(rice_id=int(rice_id))
+            if pic.exists():
+                cls.delete_pic(pic[0].id)
             s_path = "%s/%s/%s/" %(datetime.now().year, datetime.now().month, datetime.now().day)
             save_path = os.path.join(settings.PHOTO_ROOT, s_path)
             save_name = "%s.jpg" % int(time())
             if not os.path.exists(save_path):
                 os.makedirs(save_path)
-            pic = cls.objects.filter(rice_id=int(rice_id))
-            if pic.exists():
-                cls.delete_pic(pic[0].id)
             url_path = os.path.join(settings.PHOTO_URL, s_path, save_name)
             cls.objects.create(name=os.path.splitext(f.name)[0], path=url_path, rice_id=rice_id)
             img = Image.open(f)
