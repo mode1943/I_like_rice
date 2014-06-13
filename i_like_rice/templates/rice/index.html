@@ -1,0 +1,32 @@
+<html>
+<head>
+<p align="center">
+</head>
+<body>
+{% if request.user.is_authenticated %}
+    welcome, {{request.user.username}}
+    <a href="{% url logout %}">out</a>
+{% endif %}
+<p align="center"> I LIKE rice</P>
+<br>
+<br>
+<p><a href="{%}">创建rice组</a></p>
+<br>
+<br>
+<p><a href="">我的rice组</a></p>
+{% for group in group_lists %}
+<p><a href=""> {{group.name}}</a></p>
+{% endfor %}
+<p><a href="">成员</a></p>
+<p><a href="">rice_room</a></p>
+{% for riceroom in riceroom_lists %}
+<p><a href="">{{riceroom.name}}</a></p>
+{% endfor %}
+<p><a href="">rice_rice</a><p>
+{% for rice in rice_lists %}
+<p><a href="">{{rice.name}}</a></p>
+<p><a href="">{{rice.price}}</a></p>
+<p><img src="/media{{rice.ricepic_set.all.0.path}}"></p>
+{% endfor %}
+</body>
+</html>
