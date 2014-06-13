@@ -22,7 +22,7 @@ def mem_login(request):
             form = form2
         if form.is_valid():
             login(request, form.get_user())
-            return HttpResponseRedirect(reverse('reg_success'))
+            return HttpResponseRedirect(reverse('index'))
         else:
             if not request.session.get('login_error', 0):
                 request.session['login_error'] = 1
@@ -60,7 +60,6 @@ def register(request):
                 return HttpResponseRedirect(reverse('reg_success'))
     else:
         form = RegForm()
-        print form
     template_var = {'form':form}
     return render_to_response('member/register.html', template_var,
                              context_instance=RequestContext(request))
@@ -73,7 +72,4 @@ def mem_logout(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-def reg_success(request):
-    """register success """
-    return render_to_response('member/reg_success.html', context_instance=RequestContext(request))
 
