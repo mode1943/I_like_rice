@@ -18,4 +18,5 @@ urlpatterns = patterns('',
     url(r'^member/', include('rice_member.urls')),
     url(r'^captcha/', include('captcha.urls')),
     url(r'^rice/', include('rice.urls')),
+    url(r'^order/', include('rice_order.urls')),
 )
