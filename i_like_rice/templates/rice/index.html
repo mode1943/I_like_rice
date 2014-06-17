@@ -1,5 +1,23 @@
 <html>
 <head>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+function send_order(s) 
+{
+        rice_id = s.getAttribute("rice_id");
+        alert(rice_id);
+        url = "/order/buy/?" + "rice_id=" +rice_id;
+        alert(url);
+        $.get(url, function(data){
+           if (data.result == 1){
+               alert("下单成功!")
+               }
+           else {
+               alert("下单失败!")
+               }
+        }, "json");
+}
+</script>
 <p align="center">
 </head>
 <body>
@@ -8,25 +26,32 @@
     <a href="{% url logout %}">out</a>
 {% endif %}
 <p align="center"> I LIKE rice</P>
+<br/>
+<br/>
+
+<p><a href="" style="color:red">创建rice组</a></p>
+<hr>
+<br/>
 <br>
-<br>
-<p><a href="{%}">创建rice组</a></p>
-<br>
-<br>
-<p><a href="">我的rice组</a></p>
+<p><a href="" style="color:red">我的rice组</a></p>
+<hr>
 {% for group in group_lists %}
 <p><a href=""> {{group.name}}</a></p>
 {% endfor %}
-<p><a href="">成员</a></p>
-<p><a href="">rice_room</a></p>
+<hr>
+<p><a href="" style="color:red">rice_room</a></p>
+<hr>
 {% for riceroom in riceroom_lists %}
 <p><a href="">{{riceroom.name}}</a></p>
 {% endfor %}
-<p><a href="">rice_rice</a><p>
+<hr>
+<p><a href="" style="color:red">rice_rice</a><p>
+<hr>
 {% for rice in rice_lists %}
+<p><img src="/media{{rice.ricepic_set.all.0.path}}"></p>
 <p><a href="">{{rice.name}}</a></p>
 <p><a href="">{{rice.price}}</a></p>
-<p><img src="/media{{rice.ricepic_set.all.0.path}}"></p>
+<p><button type="button" id="buy" rice_id="{{rice.id}}" onclick="send_order(this)">下单</button>
 {% endfor %}
 </body>
 </html>
