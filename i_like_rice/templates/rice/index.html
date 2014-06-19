@@ -5,9 +5,7 @@
 function send_order(s) 
 {
         rice_id = s.getAttribute("rice_id");
-        alert(rice_id);
         url = "/order/buy/?" + "rice_id=" +rice_id;
-        alert(url);
         $.get(url, function(data){
            if (data.result == 1){
                alert("下单成功!")
@@ -17,6 +15,41 @@ function send_order(s)
                }
         }, "json");
 }
+
+function open_layer(s)
+{
+    layer = document.getElementById("group");
+    layer.style.display = "block";
+    rice_id = s.getAttribute("rice_id");
+    obj = document.getElementById("submit")
+
+   // alert(obj.getAttribute);
+    obj.setAttribute("rice_id", rice_id);
+}
+
+function close_layer()
+{
+    layer = document.getElementById("group");
+    layer.style.display = "none";
+    }
+
+function send_order_group(s)
+{
+    rice_id = s.getAttribute("rice_id");
+    obj = document.getElementById("group_id");
+    index = obj.selectedIndex;
+    group_id = obj[index].value;
+    url = "/order/buy/?" + "rice_id=" + rice_id + "&group_id=" + group_id;
+    $.get(url, function(data){
+           if (data.result == 1){
+               alert("下单成功!")
+               }
+           else {
+               alert("下单失败!")
+               }
+        }, "json");
+
+    }
 </script>
 <p align="center">
 </head>
@@ -51,7 +84,19 @@ function send_order(s)
 <p><img src="/media{{rice.ricepic_set.all.0.path}}"></p>
 <p><a href="">{{rice.name}}</a></p>
 <p><a href="">{{rice.price}}</a></p>
-<p><button type="button" id="buy" rice_id="{{rice.id}}" onclick="send_order(this)">下单</button>
+<p><button type="button" id="buy1" rice_id="{{rice.id}}" onclick="send_order(this)">下单</button>
+<p><button type="button" id="buy2" rice_id="{{rice.id}}" onclick="open_layer(this)">转至群组</button>
 {% endfor %}
+<div id="group" style="display:none">
+<span onclick="close_layer()" style="color:red;font-weight:bold">关闭</span>
+</br>
+群组<select id="group_id" name="groupname">
+    <option value=1> 1</option>
+    <option value=2> 2</option>
+</select>
+</br>
+<button type="button" id="submit" rice_id="" onclick="send_order_group(this)">提交</button>
+<button onclick="close_layer()">取消</button>
+</div>
 </body>
 </html>

@@ -1,3 +1,5 @@
+import datetime
+
 from django.db import models
 from django.db.models import Q
 from django.utils.translation import ugettext_lazy as _
@@ -8,6 +10,11 @@ SEX_CHOICES = (
                 ('W', _('girl')),
               )
 
+ACTION_CHOICES = (
+                    ('A', 'apply'),
+                    ('R', 'accept'),
+                    ('D', 'decline'),
+                )
 
 class Group(models.Model):
     """ the group class """
@@ -160,3 +167,52 @@ class Member(models.Model):
                 return True
         else:
             raise ValueError('g_id or m_id cannot be null')
+
+
+class GroupRequestAct(models.Model):
+    """ the member can apply to join in a group and group 
+        can allow or not to the member to be
+    """
+    member_id = models.IntegerField('member_id', default=0, db_index=True)
+    group_id = models.IntegerField('group_id', default=0, db_index=True)
+    action = models.CharField(max_length=10, blank=True, null=True, choices=ACTION_CHOICES, verbose_name='request action')
+    r_time = models.DateTimeField(auto_now_add=True)
+    a_time = models.DateTimeField(default=datetime.datetime(2000,1,1,0,0,0))
+    
+    def __unicode__(self):
+        return self.member_id
+
+    @classmethod
+    def create_act(cls, member_id, group_id):
+        """ member apply to join the group """
+        if member_id and group_id:
+            result = cls.objects.filter(member_id=int(member_id), group_id=int(group_id))
+            if result.exist():
+                if result[0].action == 'R':
+                    return True
+                if result[0].action == 'A':
+                    return True
+                if result[0].action == 'D':
+                    result.update(action='R')
+            else:
+                cls.objects.create(member_id=int(member_id), group_id=int(group_id), action='A')
+                return True
+        else:
+            raise ValueError("member_id and group_id can not be null")
+
+    @classmethod
+    def accept_act(cls, member_id, group_id, ms_id):
+        """ group act the apply for member to join the group """
+        if member_id and group_id:
+            result = cls.objects.filter(member_id=int(member_id), group_id=int(group_id))
+            result.update(action='A')
+            Member.push_member(int(group_id), int(ms_id), int(member_id))
+            return True
+        else:
+            raise ValueError("member_id and group_id can not be null") 
+
+
+
+
+
+    

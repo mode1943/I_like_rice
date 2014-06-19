@@ -37,6 +37,7 @@ class Order(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     order_num = models.IntegerField('nums', default=1)
     status = models.CharField(max_length=5, blank=True, null=True, default='0', choices=status_CHOICES, verbose_name='order status')
+    sub_to = models.IntegerField('up_to_group', default=0)
 
 
     def __unicode_(self):
@@ -65,6 +66,8 @@ class Order(models.Model):
             od.order_num = order_num
             price = Decimal(kwargs.get('price', 0)) * order_num
             od.price = price
+            sub_to = kwargs.get('sub_to', 0)
+            od.sub_to = sub_to
             od.status = '1'
             od.save()
             return od

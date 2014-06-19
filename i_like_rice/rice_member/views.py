@@ -1,12 +1,14 @@
 # Create your views here.
-from django.http import HttpResponseRedirect
+import json
+
+from django.http import (HttpResponseRedirect, HttpResponse)
 from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.contrib.auth.forms import AuthenticationForm as AtForm
 from django.contrib.auth import (authenticate, login, logout)
 from rice_member.forms import (RegForm, LoginForm)
-from rice_member.models import Member
+from rice_member.models import Member, GroupRequestAct
 
 
 def mem_login(request):
@@ -72,4 +74,21 @@ def mem_logout(request):
     return HttpResponseRedirect(reverse('login'))
 
 
+def applyfor_group(request):
+    """the member apply to join the group """
+    if request.REQUEST.get('member_id', 0) and request.REQUEST.get('group_id', 0):
+        member_id = int(request.REQUEST.get('member_id'))
+        group_id = int(request.REQUEST.get('group_id'))
+        oo = GroupRequestAct.create_act(member_id, group_id)
+        if oo:
+            data = {"result": 1}
+        else:
+            data = {"result": 0}
+    else:
+        data = {"result": 0}
+    return HttpResponse(json.dumps(data)
 
+
+def act_group(request):
+    """ the group accept the member to join """
+    pass
