@@ -21,19 +21,19 @@ function open_layer(s)
     layer = document.getElementById("group");
     layer.style.display = "block";
     rice_id = s.getAttribute("rice_id");
-    obj = document.getElementById("submit")
+    obj = document.getElementById("submit");
 
    // alert(obj.getAttribute);
     obj.setAttribute("rice_id", rice_id);
 }
 
-function close_layer()
+function close_layer(g)
 {
-    layer = document.getElementById("group");
+    layer = document.getElementById(g);
     layer.style.display = "none";
     }
 
-function send_order_group(s)
+function send_order_group(s, m)
 {
     rice_id = s.getAttribute("rice_id");
     obj = document.getElementById("group_id");
@@ -48,10 +48,38 @@ function send_order_group(s)
                alert("下单失败!")
                }
         }, "json");
+    close_layer(m);
 
     }
+
+function open_form()
+{
+    layer = document.getElementById("create_group");
+    layer.style.display = "block";
+    }
+
+function submit_form()
+{
+    name = document.getElementById("name").value;
+    description = document.getElementById("description").value;
+    url = "/member/creategroup/"
+    data = {
+            'name': name,
+            'description': description,
+            };
+    $.post(url, data, function(data){
+            if (data.result == 1){
+                alert('创建成功');
+                location.reload();
+                close_layer('creat_group');
+            }
+            else{
+                alert("创建失败");
+            } 
+        }, "json");
+    }
 </script>
-<p align="center">
+
 </head>
 <body>
 {% if request.user.is_authenticated %}
@@ -62,7 +90,7 @@ function send_order_group(s)
 <br/>
 <br/>
 
-<p><a href="" style="color:red">创建rice组</a></p>
+<p><button type="button" onclick="open_form()" style="color:red">创建rice组</button></p>
 <hr>
 <br/>
 <br>
@@ -75,7 +103,7 @@ function send_order_group(s)
 <p><a href="" style="color:red">rice_room</a></p>
 <hr>
 {% for riceroom in riceroom_lists %}
-<p><a href="">{{riceroom.name}}</a></p>
+<p><a href="/rice/index/?riceroom_id={{riceroom.id}}">{{riceroom.name}}</a></p>
 {% endfor %}
 <hr>
 <p><a href="" style="color:red">rice_rice</a><p>
@@ -88,15 +116,25 @@ function send_order_group(s)
 <p><button type="button" id="buy2" rice_id="{{rice.id}}" onclick="open_layer(this)">转至群组</button>
 {% endfor %}
 <div id="group" style="display:none">
-<span onclick="close_layer()" style="color:red;font-weight:bold">关闭</span>
+<span onclick="close_layer('group')" style="color:red;font-weight:bold">关闭</span>
 </br>
 群组<select id="group_id" name="groupname">
-    <option value=1> 1</option>
-    <option value=2> 2</option>
+    {% for group in group_lists %}
+    <option value={{group.pk}}> {{group.pk}}</option>
+    {% endfor %}
 </select>
 </br>
-<button type="button" id="submit" rice_id="" onclick="send_order_group(this)">提交</button>
-<button onclick="close_layer()">取消</button>
+<button type="button" id="submit" rice_id="" onclick="send_order_group(this,'group')">提交</button>
+<button onclick="close_layer('group')">取消</button>
+</div>
+<div id="create_group" style="display:none">
+    <span onclick="close_layer('create_group')" style="color:red;font-weight:bold">关闭</span>
+    </br>
+    <form name="create_group" method="post" action="">{% csrf_token %}
+        <input type="text" id="name" name="name" value=""/></br>
+        <input type="text" id="description" name="description" value=""/></br>
+        <button type="button" onclick="submit_form()">提交</button><button type="button" onclick="close_layer('create_group')">取消</button>
+    </form>
 </div>
 </body>
 </html>
