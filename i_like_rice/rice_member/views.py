@@ -1,4 +1,4 @@
-# Create your views here.
+""" Create your views here."""
 import json
 
 from django.http import (HttpResponseRedirect, HttpResponse)
@@ -6,9 +6,9 @@ from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.contrib.auth.forms import AuthenticationForm as AtForm
-from django.contrib.auth import (authenticate, login, logout)
+from django.contrib.auth import (login, logout)
 from rice_member.forms import (RegForm, LoginForm)
-from rice_member.models import Member, GroupRequestAct
+from rice_member.models import (Member, Group, GroupRequestAct)
 
 
 def mem_login(request):
@@ -51,19 +51,19 @@ def mem_login(request):
 
 def register(request):
     """the function for the member register"""
-    if request.method == 'POST' :
+    if request.method == 'POST':
         form = RegForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            m = Member.create_member(username, password=password, email=email)
-            if m is not None:
+            mem = Member.create_member(username, password=password, email=email)
+            if mem is not None:
                 return HttpResponseRedirect(reverse('reg_success'))
     else:
         form = RegForm()
     template_var = {'form':form}
-    return render_to_response('member/register.html', template_var,
+    return render_to_response('member/register.html', template_var, \
                              context_instance=RequestContext(request))
 
 
@@ -79,16 +79,44 @@ def applyfor_group(request):
     if request.REQUEST.get('member_id', 0) and request.REQUEST.get('group_id', 0):
         member_id = int(request.REQUEST.get('member_id'))
         group_id = int(request.REQUEST.get('group_id'))
-        oo = GroupRequestAct.create_act(member_id, group_id)
-        if oo:
+        rep = GroupRequestAct.create_act(member_id, group_id)
+        if rep:
             data = {"result": 1}
         else:
             data = {"result": 0}
     else:
         data = {"result": 0}
-    return HttpResponse(json.dumps(data)
-
-
-def act_group(request):
+    return HttpResponse(json.dumps(data))
+    
+    
+def accept_group(request):
     """ the group accept the member to join """
-    pass
+    ms_id = request.user.member.pk
+    if request.REQUEST.get('member_id', 0) and request.REQUEST.get('group_id', 0):
+        member_id = int(request.REQUEST.get('member_id'))
+        group_id = int(request.REQUEST.get('group_id'))
+        rep = GroupRequestAct.accept_act(member_id, group_id, ms_id)
+        if rep:
+            data = {'result': 1}
+        else:
+            data = {'result': 0}
+    else:
+        data = {"result": 0}
+    return HttpResponse(json.dumps(data))
+
+
+def create_group(request):
+    """ create one group """
+    print '111'
+    if request.method == 'POST':
+        mem = request.user.member
+        name = request.POST.get('name', '')
+        description = request.POST.get('description', '')
+        print '22222'
+        group = Group.create_group(mem, name, description)
+        if group:
+            data = {'result': 1}
+        else:
+            data = {'result': 0}
+        return HttpResponse(json.dumps(data))
+

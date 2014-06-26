@@ -18,6 +18,8 @@ def index(request):
     #pdb.set_trace()
     riceroom_lists = RiceRoom.objects.filter(is_open=1)
     rice_lists = Rice.objects.filter(is_sell=1)
+    if request.REQUEST.get('riceroom_id', ''):
+        rice_lists = rice_lists.filter(riceroom_id=int(request.REQUEST.get('riceroom_id')))
     group_lists = Group.objects.filter(headman=request.user.member.pk)
     extra_context = {
                      'riceroom_lists': riceroom_lists,

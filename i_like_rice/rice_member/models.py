@@ -34,7 +34,7 @@ class Group(models.Model):
     @classmethod
     def create_group(cls, m_obj, name, description=''):
         """ create group by m_obj"""
-        g = cls.objects.create(name=name, description=description, group_identify='G')
+        g = cls.objects.create(name=name, description=description)
         g.member_set.add(m_obj)
         g.headman = m_obj.pk
         g.save()
@@ -111,9 +111,8 @@ class Member(models.Model):
             try:
                 g = Group.objects.get(pk=int(g_id))
                 ids = tuple(g.member_set.all().values('id'))
-                if ms_id == g.headman:
-                    mems_s = [ s for s in mc_id if s not in ids ]
-                    mems_o = cls.objects.filter(pk__in=mems_s)
+                if int(ms_id) == g.headman and int(mc_id) not in ids:
+                    mems_o = cls.objects.get(pk=int(mc_id))
                 else:
                     raise ValueError('you has no permmions')
             except Group.DoesNotExist:
@@ -121,8 +120,7 @@ class Member(models.Model):
             except cls.DoesNotExist:
                 raise ValueError('Member has not exists')
             else:
-                for m in mems_o.iterator():
-                    g.member_set.add(m)
+                g.member_set.add(mems_o)
                 return True
         else:
             raise ValueError('g_id,ms_id or mc_id cannot be null')
@@ -135,9 +133,8 @@ class Member(models.Model):
             try:
                 g = Group.objects.get(pk=int(g_id))
                 ids = list(g.member_set.all().values('id'))
-                if ms_id == g.headman:
-                    mems_s = [ s for s in mc_id if s not in ids]
-                    mems_o = cls.objects.filter(pk__in=mems_s)
+                if int(ms_id) == g.headman and int(mc_id) not in ids:
+                    mems_o = cls.objects.get(pk=int(mc_id))
                 else:
                     raise ValueError('you has no perssions')
             except Group.DoesNotExist:
@@ -145,8 +142,7 @@ class Member(models.Model):
             except cls.DoesNotExist:
                 raise ValueError('Member has not exists')
             else:
-                for m in mems_o.iterator():
-                    g.member_set.remove(m)
+                g.member_set.remove(mems_o)
                 return True
         else:
             raise ValueError('g_id or m_id cannot be null')
@@ -187,7 +183,7 @@ class GroupRequestAct(models.Model):
         """ member apply to join the group """
         if member_id and group_id:
             result = cls.objects.filter(member_id=int(member_id), group_id=int(group_id))
-            if result.exist():
+            if result.exists():
                 if result[0].action == 'R':
                     return True
                 if result[0].action == 'A':
@@ -195,7 +191,7 @@ class GroupRequestAct(models.Model):
                 if result[0].action == 'D':
                     result.update(action='R')
             else:
-                cls.objects.create(member_id=int(member_id), group_id=int(group_id), action='A')
+                cls.objects.create(member_id=int(member_id), group_id=int(group_id), action='R')
                 return True
         else:
             raise ValueError("member_id and group_id can not be null")
@@ -207,6 +203,7 @@ class GroupRequestAct(models.Model):
             result = cls.objects.filter(member_id=int(member_id), group_id=int(group_id))
             result.update(action='A')
             Member.push_member(int(group_id), int(ms_id), int(member_id))
+            print '1111'
             return True
         else:
             raise ValueError("member_id and group_id can not be null") 
